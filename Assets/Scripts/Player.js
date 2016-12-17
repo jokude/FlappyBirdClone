@@ -1,37 +1,40 @@
 ﻿#pragma strict
 
 public var jumpSpeed: float;
+public var scoreClip: AudioClip;
+public var gameOverClip: AudioClip;
+public var flapClip: AudioClip;
 
-private var body: Rigidbody;
+private var body: Rigidbody2D;
 private var animationManager: Animator;
-private var soundManager : SoundManager;
-private var uiManager : StateManager;
+private var uiManager : UIManager;
+private var audioSource : AudioSource;
 
 function Start () {
-  this.body = this.GetComponent(Rigidbody);
+  this.body = this.GetComponent(Rigidbody2D);
   this.animationManager = this.GetComponent(Animator);
-  this.soundManager = SoundManager.Instance();
-  this.uiManager = GameObject.Find("UI").GetComponent(StateManager);
+  this.audioSource = this.GetComponent(AudioSource);
+  this.uiManager = GameObject.Find("UI").GetComponent(UIManager);
 }
 
 function Update () {
   if (Input.GetKeyDown("space")){
     this.body.velocity.y = 0;
-    this.body.AddForce(0, this.jumpSpeed * Time.deltaTime, 0, ForceMode.Impulse);
+    this.body.AddForce(Vector2.up * this.jumpSpeed * Time.deltaTime, ForceMode2D.Impulse);
     this.animationManager.Play("Fly");
-    this.soundManager.Play(SoundManager.Clips.FLAP);
+    this.audioSource.PlayOneShot(this.flapClip, 0.8f);
   }
 }
 
-function OnTriggerEnter(collider : Collider) {
+function OnTriggerEnter2D(collider: Collider2D) {
 
-  var tag = collider.gameObject.tag;
+  var tag: String = collider.gameObject.tag;
 
   if(tag == "Danger"){
-    this.soundManager.Play(SoundManager.Clips.GAMEOVER);
+    this.audioSource.PlayOneShot(this.gameOverClip, 0.8f);
     uiManager.StopGame();
   } else if(tag == "Score"){
-    this.soundManager.Play(SoundManager.Clips.SCORE);
+    this.audioSource.PlayOneShot(this.scoreClip, 1.0f);
     uiManager.IncreaseScore();
   }
 }

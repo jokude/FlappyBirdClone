@@ -16,7 +16,7 @@ function Start () {
 
 function Update () {
 
-  var step = Time.deltaTime*speed;
+  var step: float = Time.deltaTime*speed;
   this.children[0].localPosition.x -= step;
   this.children[1].localPosition.x -= step;
 
@@ -25,5 +25,4 @@ function Update () {
     this.children[currentChild].position.x = this.children[nextChild].position.x + this.childSizeX;
     this.currentChild = nextChild;
   }
- 
 }
